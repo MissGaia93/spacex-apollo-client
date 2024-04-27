@@ -11,7 +11,7 @@ import SpaceXAPI from './spacexApi';
 //query my graphql server at localhost :4000 for launch data
 
 const client = new ApolloClient({
-  uri: 'https://4a03-71-178-47-228.ngrok-free.app',
+  uri: 'http://localhost:4000',
   cache: new InMemoryCache()
 });
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { ApolloClient, gql, InMemoryCache, ApolloProvider } from '@apollo/client';
 
 const LAUNCHES = gql`
     query Launches($limit: Int, $keyword: String, $offset: Int, $sort: String) {
@@ -28,7 +29,7 @@ const LAUNCHES = gql`
 `;
 
 function SpaceXAPI() {
-    const { loading, error, data } = useQuery(LAUNCHES, {
+    //const { loading, error, data } = useQuery(LAUNCHES, {
     
     return (
         <div>
