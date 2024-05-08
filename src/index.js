@@ -5,57 +5,42 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ApolloClient, gql, InMemoryCache, ApolloProvider } from '@apollo/client';
 //import { cache } from './cache'
-import SpaceXAPI from './spacexApi';
-
-
-//query my graphql server at localhost :4000 for launch data
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000',
-  cache: new InMemoryCache()
-});
-
-
-client.query({
-  query: gql`
-    query Launches($limit: Int, $keyword: String, $offset: Int, $sort: String) {
-      launches(limit: $limit, keyword: $keyword, offset: $offset, sort: $sort) {
-        id
-        launchpad {
-          locality
-        }
-        payload {
-          name
-        }
-        details
-        success
-        links {
-          patch {
-            small
+  cache: new InMemoryCache(
+    {typePolicies: {
+      Query: {
+        fields: {
+          launches: {
+            keyArgs: false,
+            merge(existing, incoming) {
+              let launches = [];
+              if (existing && existing.launches) {
+                launches = launches.concat(existing.launches);
+              }
+              if (incoming && incoming.launches) {
+                launches = launches.concat(incoming.launches);
+              }
+              return {
+                ...incoming,
+                launches
+              };
+            }
           }
-          flickr {
-            original
-          }
-        }
-        rocket {
-          name
         }
       }
-    }
-  `, variables: {
-  limit: 10,
-  keyword: "crs",
-  offset: 0,
-  sort: "asc"
-}
-}).then(result => console.log(result));
+    }}
+  )
+});
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+  <ApolloProvider client={client}>
   <React.StrictMode>
     <App />
-    <SpaceXAPI />
   </React.StrictMode>
+  </ApolloProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function
